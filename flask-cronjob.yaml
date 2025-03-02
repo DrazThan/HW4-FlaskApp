@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: flask-health-check
+  namespace: flask-app
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: health-check
+            image: curlimages/curl
+            command:
+            - /bin/sh
+            - -c
+            - curl -s flask-service.flask-app.svc.cluster.local:80/health
+          restartPolicy: OnFailure

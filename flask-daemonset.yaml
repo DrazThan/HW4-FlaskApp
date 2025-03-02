@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: flask-logger
+  namespace: flask-app
+spec:
+  selector:
+    matchLabels:
+      app: flask-logger
+  template:
+    metadata:
+      labels:
+        app: flask-logger
+    spec:
+      containers:
+      - name: logger
+        image: busybox
+        command: ["/bin/sh", "-c", "while true; do echo $(date) - Logger is running; sleep 60; done"]
+        volumeMounts:
+        - name: log-volume
+          mountPath: /logs
+      volumes:
+      - name: log-volume
+        persistentVolumeClaim:
+          claimName: flask-pvc
